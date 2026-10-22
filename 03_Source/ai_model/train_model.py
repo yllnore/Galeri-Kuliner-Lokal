@@ -7,39 +7,39 @@ from tensorflow.keras.optimizers import Adam
 import json
 import os
 
-# 1. Setup Path
-dataset_path = "../../02_Data_dan_Aset/dataset_kuliner"
+# 1. Setup Path ke Folder Fisik yang Baru
+train_path = "../../02_Data_dan_Aset/dataset_kuliner/train"
+val_path = "../../02_Data_dan_Aset/dataset_kuliner/val"
 model_output_dir = "../../04_Portofolio_Al_dan_Blockchain/models"
 os.makedirs(model_output_dir, exist_ok=True)
 
 print(">>> Mempersiapkan Data Augmentation...")
-# 2. Data Augmentation (Jurus rahasia untuk dataset kecil!)
-datagen = ImageDataGenerator(
+# 2. Data Augmentation khusus untuk Train, dan Rescale saja untuk Val
+train_datagen = ImageDataGenerator(
     rescale=1./255,
     rotation_range=30,      # Gambar diputar acak
     width_shift_range=0.2,  # Digeser kiri-kanan
     height_shift_range=0.2, # Digeser atas-bawah
     zoom_range=0.2,         # Di-zoom acak
     horizontal_flip=True,   # Dibalik seperti cermin
-    fill_mode='nearest',
-    validation_split=0.2
+    fill_mode='nearest'
 )
 
-# Batch size dikecilkan jadi 4 karena data kita sedikit
-train_generator = datagen.flow_from_directory(
-    dataset_path,
+val_datagen = ImageDataGenerator(rescale=1./255)
+
+# Hubungkan langsung ke folder fisik masing-masing (Batch size = 4)
+train_generator = train_datagen.flow_from_directory(
+    train_path,
     target_size=(224, 224),
     batch_size=4,
-    class_mode='categorical',
-    subset='training'
+    class_mode='categorical'
 )
 
-val_generator = datagen.flow_from_directory(
-    dataset_path,
+val_generator = val_datagen.flow_from_directory(
+    val_path,
     target_size=(224, 224),
     batch_size=4,
-    class_mode='categorical',
-    subset='validation'
+    class_mode='categorical'
 )
 
 # 3. Build Model MobileNetV2

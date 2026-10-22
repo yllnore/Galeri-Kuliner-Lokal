@@ -6,9 +6,9 @@ from sklearn.metrics import classification_report, confusion_matrix
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import os
 
-# 1. Sesuaikan path folder (berdasarkan struktur komputermu sebelumnya)
+# 1. Sesuaikan path model dan arahkan khusus ke folder TEST
 model_path = "../../04_Portofolio_Al_dan_Blockchain/models/kuliner_cnn_model.h5"
-dataset_path = "../../02_Data_dan_Aset/dataset_kuliner"
+test_path = "../../02_Data_dan_Aset/dataset_kuliner/test"  # Diubah langsung ke folder test
 output_folder = "../../05_Test_dan_Deployment"
 
 # Buat folder output jika belum ada
@@ -18,27 +18,26 @@ os.makedirs(output_folder, exist_ok=True)
 print(">>> Memuat model CNN...")
 model = tf.keras.models.load_model(model_path)
 
-# 3. Siapkan data generator untuk validasi (shuffle=False wajib untuk evaluasi)
-datagen = ImageDataGenerator(rescale=1./255, validation_split=0.2)
-val_generator = datagen.flow_from_directory(
-    dataset_path,
+# 3. Siapkan data generator khusus untuk TEST (shuffle=False wajib, tanpa validation_split)
+datagen = ImageDataGenerator(rescale=1./255)
+test_generator = datagen.flow_from_directory(
+    test_path,
     target_size=(224, 224),
     batch_size=32,
     class_mode='categorical',
-    subset='validation',
     shuffle=False
 )
 
-# 4. Lakukan Prediksi
-print("\n>>> Melakukan prediksi pada data validasi...")
-predictions = model.predict(val_generator)
+# 4. Lakukan Prediksi pada data test
+print("\n>>> Melakukan prediksi pada data test...")
+predictions = model.predict(test_generator)
 y_pred = np.argmax(predictions, axis=1)
-y_true = val_generator.classes
-class_labels = list(val_generator.class_indices.keys())
+y_true = test_generator.classes
+class_labels = list(test_generator.class_indices.keys())
 
 # 5. Tampilkan Classification Report (Precision, Recall, F1-Score)
 print("\n" + "="*50)
-print("             CLASSIFICATION REPORT")
+print("            CLASSIFICATION REPORT")
 print("="*50)
 report = classification_report(y_true, y_pred, target_names=class_labels)
 print(report)

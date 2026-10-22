@@ -4,11 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 
-# 1. Setup Path
-dataset_path = "../../02_Data_dan_Aset/dataset_kuliner"
+# 1. Setup Path ke Folder Fisik Train dan Test yang Baru
+train_path = "../../02_Data_dan_Aset/dataset_kuliner/train"
+test_path = "../../02_Data_dan_Aset/dataset_kuliner/test"
 output_folder = "../../05_Test_dan_Deployment"
 os.makedirs(output_folder, exist_ok=True)
 
@@ -24,38 +24,55 @@ def extract_color_histogram(image_path):
     cv2.normalize(hist, hist)
     return hist.flatten()
 
-print(">>> Membaca dataset dan mengekstrak fitur warna...")
-X = []
-y = []
 classes = ['pempek', 'rendang', 'soto']
 
-# 3. Proses semua gambar
+# 3. Membaca Data Train
+print(">>> Membaca data TRAINING dan mengekstrak fitur warna...")
+X_train = []
+y_train = []
 for class_idx, class_name in enumerate(classes):
-    class_dir = os.path.join(dataset_path, class_name)
+    class_dir = os.path.join(train_path, class_name)
+    if not os.path.exists(class_dir):
+        continue
     for img_name in os.listdir(class_dir):
         img_path = os.path.join(class_dir, img_name)
         features = extract_color_histogram(img_path)
         if features is not None:
-            X.append(features)
-            y.append(class_idx)
+            X_train.append(features)
+            y_train.append(class_idx)
 
-X = np.array(X)
-y = np.array(y)
+X_train = np.array(X_train)
+y_train = np.array(y_train)
 
-# 4. Split Data (Sama seperti CNN: 80% Train, 20% Test)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# 4. Membaca Data Test
+print(">>> Membaca data TESTING dan mengekstrak fitur warna...")
+X_test = []
+y_test = []
+for class_idx, class_name in enumerate(classes):
+    class_dir = os.path.join(test_path, class_name)
+    if not os.path.exists(class_dir):
+        continue
+    for img_name in os.listdir(class_dir):
+        img_path = os.path.join(class_dir, img_name)
+        features = extract_color_histogram(img_path)
+        if features is not None:
+            X_test.append(features)
+            y_test.append(class_idx)
+
+X_test = np.array(X_test)
+y_test = np.array(y_test)
 
 # 5. Latih Model SVM
 print("\n>>> Melatih model Support Vector Machine (SVM)...")
 svm_model = SVC(kernel='linear', random_state=42)
 svm_model.fit(X_train, y_train)
 
-# 6. Evaluasi Model SVM
-print(">>> Mengevaluasi model SVM...")
+# 6. Evaluasi Model SVM menggunakan Data Test Asli
+print(">>> Mengevaluasi model SVM pada data test...")
 y_pred = svm_model.predict(X_test)
 
 print("\n" + "="*50)
-print("       CLASSIFICATION REPORT (SVM - WARNA)")
+print("             CLASSIFICATION REPORT (SVM - WARNA)")
 print("="*50)
 report = classification_report(y_test, y_pred, target_names=classes)
 print(report)
