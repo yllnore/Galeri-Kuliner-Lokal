@@ -1,0 +1,23 @@
+{
+    "name": "Galeri Kuliner Lokal: Soto Banjar Asli",
+    "description": "Kuliner khas Kalimantan Selatan dengan kuah rempah pilihan.",
+    "image": "ipfs://bafybeic77g...exampleCID",
+    "attributes": [
+        {
+            "trait_type": "Kategori Kuliner",
+            "value": "Soto"
+        },
+        {
+            "trait_type": "Pembuat (Creator)",
+            "value": "0x1234567890abcdef1234567890abcdef12345678"
+        },
+        {
+            "trait_type": "Status Bantuan AI",
+            "value": "Verified by CNN Model MobileNetV2"
+        },
+        {
+            "trait_type": "Versi Metadata",
+            "value": "v1.0"
+        }
+    ]
+}
