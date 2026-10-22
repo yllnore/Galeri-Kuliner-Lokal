@@ -1,0 +1,11 @@
+CLASSIFICATION REPORT (SVM)
+===========================
+              precision    recall  f1-score   support
+
+      pempek       0.00      0.00      0.00         2
+     rendang       0.00      0.00      0.00         2
+        soto       0.40      1.00      0.57         2
+
+    accuracy                           0.33         6
+   macro avg       0.13      0.33      0.19         6
+weighted avg       0.13      0.33      0.19         6
