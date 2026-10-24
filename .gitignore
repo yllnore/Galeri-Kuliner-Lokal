@@ -23,6 +23,8 @@ types/
 
 # Hardhat coverage reports
 coverage/
+coverage.json
+**/coverage.json
 
 # Gas snapshot files
 .gas-snapshot
